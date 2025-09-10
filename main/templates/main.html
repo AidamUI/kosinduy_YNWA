@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+
+        h2 {
+            color: #00A398;
+            font-weight: bolder;
+        }
+
+        body {
+            background-color: #C8102E; 
+            color: white; 
+        }
+
+        .biodata {
+            background-color: antiquewhite;
+            width: fit-content;
+        }
+
+        .item-card {
+            background-color: #1a1a1a;
+            border: 1px solid #333;
+            padding: 15px;
+            border-radius: 8px;
+            width: 300px;
+            color: white;
+        }
+
+        .item-card h3 {
+            color: #f0f0f0;
+        }
+    </style>
+</head>
+<body>
+
+<!-- <h2>All Items</h2> -->
+ <div class="biodata">
+    <h2>{{npm}}</h2>
+    <h2>{{name}}</h2>
+    <h2>{{class}}</h2>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 20px;">
+    {% for item in items %}
+        <div class="item-card">
+            {% if item.thumbnail %}
+                <img src="{{ item.thumbnail }}" alt="{{ item.name }}" style="max-width: 100%; height: auto; border-radius: 4px;">
+            {% endif %}
+            <h3>{{ item.name }}</h3>
+            <p><strong>Price:</strong> {{ item.price }}</p>
+            <p><strong>Category:</strong> {{ item.category }}</p>
+            <p>{{ item.description }}</p>
+            <p>
+                <strong>Stock:</strong> {{ item.stock }}
+                {% if item.is_in_stock %}
+                    <span style="color: green;">(In Stock)</span>
+                {% else %}
+                    <span style="color: red;">(Out of Stock)</span>
+                {% endif %}
+            </p>
+            {% if item.is_featured %}
+                <p><strong>&#9733; Featured Item</strong></p>
+            {% endif %}
+        </div>
+    {% empty %}
+        <p>No items found.</p>
+    {% endfor %}
+</div>
+
+<img src="{{liverpool_logo}}" alt="">
+
+</body>
+</html>
