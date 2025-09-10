@@ -20,7 +20,7 @@
             width: fit-content;
         }
 
-        .item-card {
+        .product-card {
             background-color: #1a1a1a;
             border: 1px solid #333;
             padding: 15px;
@@ -29,7 +29,7 @@
             color: white;
         }
 
-        .item-card h3 {
+        .product-card h3 {
             color: #f0f0f0;
         }
     </style>
@@ -43,29 +43,29 @@
     <h2>{{class}}</h2>
 </div>
 <div style="display: flex; flex-wrap: wrap; gap: 20px;">
-    {% for item in items %}
-        <div class="item-card">
-            {% if item.thumbnail %}
-                <img src="{{ item.thumbnail }}" alt="{{ item.name }}" style="max-width: 100%; height: auto; border-radius: 4px;">
+    {% for product in products %}
+        <div class="product-card">
+            {% if product.thumbnail %}
+                <img src="{{ product.thumbnail }}" alt="{{ product.name }}" style="max-width: 100%; height: auto; border-radius: 4px;">
             {% endif %}
-            <h3>{{ item.name }}</h3>
-            <p><strong>Price:</strong> {{ item.price }}</p>
-            <p><strong>Category:</strong> {{ item.category }}</p>
-            <p>{{ item.description }}</p>
+            <h3>{{ product.name }}</h3>
+            <p><strong>Price:</strong> {{ product.price }}</p>
+            <p><strong>Category:</strong> {{ product.category }}</p>
+            <p>{{ product.description }}</p>
             <p>
-                <strong>Stock:</strong> {{ item.stock }}
-                {% if item.is_in_stock %}
+                <strong>Stock:</strong> {{ product.stock }}
+                {% if product.is_in_stock %}
                     <span style="color: green;">(In Stock)</span>
                 {% else %}
                     <span style="color: red;">(Out of Stock)</span>
                 {% endif %}
             </p>
-            {% if item.is_featured %}
+            {% if product.is_featured %}
                 <p><strong>&#9733; Featured Item</strong></p>
             {% endif %}
         </div>
     {% empty %}
-        <p>No items found.</p>
+        <p>No products found.</p>
     {% endfor %}
 </div>
 
