@@ -68,6 +68,9 @@
             {% if product.is_featured %}
                 <p><strong>&#9733; Featured Item</strong></p>
             {% endif %}
+            <a href="{% url 'main:show_product' product.id %}">
+                <button>More Detail</button>
+            </a>
         </div>
     {% empty %}
         <p>No products found.</p>
