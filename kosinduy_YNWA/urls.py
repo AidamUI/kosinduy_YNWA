@@ -20,4 +20,9 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('main.urls')),
+    path('xml/', include('main.urls')),
+    path('json/', include('main.urls')),
+    path('xml_by_id/', include('main.urls')),
+    path('json_by_id/', include('main.urls')),
+    path('add_product/', include('main.urls')),
 ]

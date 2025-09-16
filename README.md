@@ -1,4 +1,4 @@
-# kosinduy_YNWA
+# TUGAS 2
 
 **Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step (bukan hanya sekadar mengikuti tutorial).**
 
@@ -58,3 +58,44 @@ Selain itu, Django menggunakan bahasa Python yang dikenal sebagai bahasa yang mu
 **Apakah ada feedback untuk asisten dosen tutorial 1 yang telah kamu kerjakan sebelumnya?**
 
 Saya ingin mengucapkan terima kasih kak sudah membantu selama tutorial, walaupun terkadang pertanyaannya agak konyol 😅. Penjelasannya kakak-kakak asdos sangat jelas dan mudah diikuti. Untuk kedepannya, mungkin penjelasan lebih dalam mengenai cara kerja program/apa yang dilakukan kode yang baru kita tulis bisa diberi penjelasan karena setelah kelas saya banyak mencari tahu sendiri. Selain itu, best practice dalam penulisan kode Django juga boleh diberikan ke kita. Terima Kasih Kak!
+
+
+
+
+
+# TUGAS 2
+
+**Jelaskan mengapa kita memerlukan data delivery dalam pengimplementasian sebuah platform?**
+
+Data delivery diperlukan agar data yang tersimpan di server dapat dikirim dan diakses oleh client (seperti aplikasi web atau mobile) secara efisien. Dengan adanya data delivery, client bisa mendapatkan data terbaru dari server, menampilkan informasi yang relevan kepada pengguna, dan melakukan sinkronisasi data antar perangkat. Tanpa mekanisme data delivery, aplikasi hanya akan bersifat statis dan tidak bisa menampilkan data dinamis atau melakukan interaksi dua arah antara client dan server.
+
+**Menurutmu, mana yang lebih baik antara XML dan JSON? Mengapa JSON lebih populer dibandingkan XML?**
+
+Menurut saya, JSON lebih baik untuk kebanyakan aplikasi modern karena formatnya lebih sederhana, mudah dibaca manusia, dan langsung bisa diproses oleh JavaScript di browser tanpa parsing tambahan. JSON juga menghasilkan data yang lebih ringkas sehingga lebih hemat bandwidth. Sementara itu, XML memang lebih fleksibel dan bisa digunakan untuk validasi data yang kompleks, tetapi sintaksnya lebih rumit dan ukuran file biasanya lebih besar. Karena alasan kemudahan penggunaan dan efisiensi, JSON menjadi standar utama untuk pertukaran data di web saat ini.
+
+**Jelaskan fungsi dari method is_valid() pada form Django dan mengapa kita membutuhkan method tersebut?**
+
+Method is_valid() pada form Django digunakan untuk melakukan validasi otomatis terhadap data yang diinputkan user, sesuai dengan aturan yang sudah didefinisikan di form atau model. Jika data yang dikirim user tidak sesuai (misal: format email salah, field wajib kosong, dsb), maka form akan dianggap tidak valid dan error bisa ditampilkan ke user. Dengan is_valid(), kita memastikan hanya data yang benar dan aman yang akan diproses atau disimpan ke database.
+
+**Mengapa kita membutuhkan csrf_token saat membuat form di Django? Apa yang dapat terjadi jika kita tidak menambahkan csrf_token pada form Django? Bagaimana hal tersebut dapat dimanfaatkan oleh penyerang?**
+
+csrf_token dibutuhkan untuk melindungi aplikasi dari serangan Cross-Site Request Forgery (CSRF), yaitu serangan di mana penyerang mencoba memanfaatkan sesi login user untuk mengirimkan permintaan palsu ke server tanpa sepengetahuan user. Jika kita tidak menambahkan csrf_token pada form, penyerang bisa membuat user yang sedang login tanpa sadar melakukan aksi berbahaya seperti mengubah data, menghapus akun, atau transaksi ilegal hanya dengan mengunjungi website lain. Dengan adanya csrf_token, server bisa memastikan setiap permintaan POST benar-benar berasal dari form yang sah di aplikasi kita, sehingga serangan CSRF bisa dicegah.
+
+**Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step (bukan hanya sekadar mengikuti tutorial).**
+
+Saya mulai dengan menambahkan empat fungsi baru di views.py, yaitu fungsi untuk menampilkan data produk dalam format XML, JSON, XML by ID, dan JSON by ID. Masing-masing fungsi ini menggunakan modul serializers dari Django untuk mengubah queryset produk menjadi format XML atau JSON, lalu mengembalikannya sebagai response. Untuk fungsi by ID, saya menggunakan filter berdasarkan primary key agar hanya data produk tertentu yang diambil. Selain itu, saya juga menambahkan fungsi add_product untuk menangani form penambahan produk baru ke database, serta fungsi show_product untuk menampilkan detail dari setiap produk berdasarkan ID-nya. Setelah itu, saya membuat file forms.py dan mendefinisikan sebuah class form berbasis ModelForm untuk model Product. Dengan form ini, saya bisa membuat halaman tambah produk yang otomatis sudah ada validasi dan field-nya sesuai dengan model.
+
+Saya kemudian membuat template dasar base.html yang berisi struktur HTML utama (seperti tag <html>, <head>, dan <body>) serta block konten yang bisa di-extend oleh template lain. Supaya Django bisa menemukan template ini, saya menambahkan konfigurasi direktori template di settings.py dengan menambahkan path ke folder templates pada bagian DIRS di variabel TEMPLATES. Selanjutnya, saya menambahkan dua file template baru, yaitu create_product.html untuk halaman form tambah produk dan product_detail.html untuk menampilkan detail produk. Pada create_product.html, saya menggunakan {% extends 'base.html' %} dan menampilkan form yang sudah dibuat di forms.py. Pada product_detail.html, saya juga extend dari base.html dan menampilkan detail lengkap dari produk yang dipilih. Selain itu, saya juga mengedit template main.html agar menampilkan tombol "Add Product" yang mengarah ke halaman tambah produk, serta menambahkan tombol "More Detail" pada setiap div produk yang akan mengarahkan ke halaman detail produk tersebut.
+
+Terakhir, saya menambahkan routing baru di urls.py untuk menghubungkan setiap fungsi view yang sudah dibuat tadi dengan URL yang sesuai. Saya menambahkan path untuk halaman utama, tambah produk, detail produk, serta empat path tambahan untuk akses data produk dalam format XML, JSON, XML by ID, dan JSON by ID.
+
+**Apakah ada feedback untuk asdos di tutorial 2 yang sudah kalian kerjakan?**
+
+Menurut saya tidak ada feedback lebih lanjut dari tutorial 1. Saya sangat merasa terbantu ketika bertanya dan tutorial yang ada juga sudah sangat jelas dan informatif. Mungkin saya bisa sebutkan terkait demo tugas yang awalnya saya kira akan sangat tegang karena pemahaman saya yang mungkin masih terbatas, tetapi ternyata saya lumayan paham dan kak Isa baik juga 😁.
+
+**Mengakses keempat URL di poin 2 menggunakan Postman, membuat screenshot dari hasil akses URL pada Postman**
+
+![alt text](image.png)
+![alt text](image-1.png)
+![alt text](image-2.png)
+![alt text](image-3.png)
