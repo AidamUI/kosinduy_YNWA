@@ -63,7 +63,7 @@ Saya ingin mengucapkan terima kasih kak sudah membantu selama tutorial, walaupun
 
 
 
-# TUGAS 2
+# TUGAS 3
 
 **Jelaskan mengapa kita memerlukan data delivery dalam pengimplementasian sebuah platform?**
 
