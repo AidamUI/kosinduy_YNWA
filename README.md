@@ -63,7 +63,7 @@ Saya ingin mengucapkan terima kasih kak sudah membantu selama tutorial, walaupun
 
 
 
-# TUGAS 2
+# TUGAS 3
 
 **Jelaskan mengapa kita memerlukan data delivery dalam pengimplementasian sebuah platform?**
 
@@ -99,3 +99,37 @@ Menurut saya tidak ada feedback lebih lanjut dari tutorial 1. Saya sangat merasa
 ![alt text](image-1.png)
 ![alt text](image-2.png)
 ![alt text](image-3.png)
+
+
+
+
+
+# TUGAS 4
+
+**Apa itu Django AuthenticationForm? Jelaskan juga kelebihan dan kekurangannya.**
+
+Django AuthenticationForm adalah form bawaan yang disediakan oleh Django untuk menangani proses login user. Form ini sudah otomatis menyediakan field username dan password, serta melakukan validasi kredensial terhadap database user yang ada di aplikasi. Dengan AuthenticationForm, developer tidak perlu membuat form login dari awal karena semua proses validasi, pengecekan user aktif, dan keamanan seperti hashing password sudah di-handle oleh Django.
+
+Kelebihan utama dari AuthenticationForm adalah kemudahan integrasi dengan sistem autentikasi Django sehingga proses login bisa dilakukan dengan sedikit kode dan sudah aman dari berbagai serangan umum seperti brute force. Namun, kekurangannya adalah form ini hanya cocok untuk autentikasi standar dan kurang fleksibel jika ingin menambahkan fitur login yang lebih kompleks seperti OTP, social login, atau custom error message. Selain itu, tampilan dan pesan error default kadang perlu diubah agar lebih sesuai dengan kebutuhan aplikasi.
+
+**Apa perbedaan antara autentikasi dan otorisasi? Bagaiamana Django mengimplementasikan kedua konsep tersebut?**
+
+Perbedaan antara autentikasi dan otorisasi adalah tujuan dan prosesnya. Autentikasi adalah proses untuk memastikan identitas user dengan memverifikasi apakah user benar-benar yang dia klaim. Sementara itu, otorisasi adalah proses untuk menentukan hak akses user, yaitu apakah user yang sudah terautentikasi boleh melakukan aksi tertentu di aplikasi. 
+
+Pada Django, autentikasi diimplementasikan melalui User model bawaan, AuthenticationForm, dan session framework yang menyimpan status login user. Django juga menyediakan decorator seperti @login_required untuk membatasi akses hanya kepada user yang sudah login. Untuk otorisasi, Django memiliki sistem permission yang bisa diatur per model (add, change, delete, view), group untuk mengelompokkan user dengan hak akses tertentu, serta method seperti user.has_perm() dan decorator @permission_required untuk mengecek dan membatasi akses berdasarkan hak user. Dengan kombinasi autentikasi dan otorisasi ini, Django memastikan hanya user yang berhak yang bisa mengakses dan melakukan aksi tertentu di aplikasi.
+
+**Apa saja kelebihan dan kekurangan session dan cookies dalam konteks menyimpan state di aplikasi web?**
+
+Dalam konteks menyimpan state di aplikasi web, session dan cookies memiliki kelebihan dan kekurangan masing-masing. Session menyimpan data di server sehingga lebih aman dari manipulasi user dan cocok untuk data yang sifatnya sensitif atau kompleks. Namun, session membutuhkan storage di server dan bisa menjadi masalah jika aplikasi harus di-scale ke banyak server, karena session biasanya tersimpan di satu tempat. Selain itu, session bisa hilang jika server restart kecuali menggunakan persistent storage. Di sisi lain, cookies menyimpan data di browser user sehingga tidak membebani server dan cocok untuk data sederhana yang tidak sensitif. Cookies bisa bertahan lama di browser user, tetapi ukurannya terbatas dan mudah diubah atau dihapus oleh user. Selain itu, cookies dikirim di setiap request sehingga bisa mempengaruhi bandwidth dan tidak cocok untuk data yang sifatnya rahasia.
+
+**Apakah penggunaan cookies aman secara default dalam pengembangan web, atau apakah ada risiko potensial yang harus diwaspadai? Bagaimana Django menangani hal tersebut?**
+
+Penggunaan cookies dalam pengembangan web tidak sepenuhnya aman. Ada beberapa risiko yang harus diwaspadai, seperti session hijacking, XSS, CSRF, dan pencurian data jika tidak menggunakan HTTPS. Django menangani risiko-risiko ini dengan beberapa mekanisme keamanan seperti cryptographic signing pada session cookie menggunakan SECRET_KEY, pengaktifan HttpOnly dan Secure flag untuk session cookie agar tidak bisa diakses oleh JavaScript dan hanya dikirim lewat HTTPS, serta proteksi CSRF otomatis lewat middleware dan token. Django juga mendukung pengaturan SameSite attribute untuk mencegah serangan CSRF dan memungkinkan developer mengatur SESSION_COOKIE_SECURE, SESSION_COOKIE_HTTPONLY, dan CSRF_COOKIE_SECURE di settings.py untuk keamanan maksimal. Dengan pengaturan yang tepat, risiko penggunaan cookies bisa diminimalisir, tetapi developer tetap harus waspada dan mengaktifkan fitur keamanan tambahan terutama di production environment.
+
+**Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step (bukan hanya sekadar mengikuti tutorial).**
+
+Saya mulai dengan menambahkan fitur autentikasi di aplikasi, yaitu register, login, dan logout menggunakan form bawaan Django. Dengan fitur ini, user bisa membuat akun baru, login, dan keluar dari aplikasi dengan mekanisme yang sudah aman dan terintegrasi dengan session Django. Setelah user berhasil login, saya menyimpan waktu terakhir login ke dalam cookie last_login, lalu menampilkannya di halaman utama agar user bisa tahu kapan terakhir kali mereka login. Cookie ini juga saya hapus saat user melakukan logout agar data yang ditampilkan tetap akurat.
+
+Akses ke halaman utama dan detail produk saya batasi hanya untuk user yang sudah login dengan menambahkan decorator @login_required di beberapa fungsi views. Di halaman utama, saya juga menambahkan filter agar user bisa memilih untuk melihat semua produk atau hanya produk yang mereka buat sendiri. Filter ini diambil dari query parameter di URL yang dikirim ke template.
+
+Di bagian model, setiap produk saya hubungkan ke user pembuatnya dengan ForeignKey ke model User. Dengan cara ini, setiap produk yang ditambahkan akan tercatat siapa pembuatnya, dan fitur filter "My Products" bisa berjalan dengan baik. Setelah mengubah model, saya jalankan migrasi database agar struktur data sesuai kebtuhan.
