@@ -43,6 +43,21 @@
     <h2>{{class}}</h2>
 </div>
 
+<!-- logout -->
+<a href="{% url 'main:logout' %}">
+  <button>Logout</button>
+</a>
+<h4>Current User: {{request.user.username}}</h4>
+<h5>Sesi terakhir login: {{ last_login }}</h5>
+
+<!-- filter -->
+ <a href="?filter=all">
+    <button type="button">All Products</button>
+</a>
+<a href="?filter=my">
+    <button type="button">My Products</button>
+</a>
+
 <a href="{% url 'main:add_product' %}">
   <button>+ Add Product</button>
 </a>

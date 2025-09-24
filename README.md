@@ -93,7 +93,7 @@ Terakhir, saya menambahkan routing baru di urls.py untuk menghubungkan setiap fu
 
 Menurut saya tidak ada feedback lebih lanjut dari tutorial 1. Saya sangat merasa terbantu ketika bertanya dan tutorial yang ada juga sudah sangat jelas dan informatif. Mungkin saya bisa sebutkan terkait demo tugas yang awalnya saya kira akan sangat tegang karena pemahaman saya yang mungkin masih terbatas, tetapi ternyata saya lumayan paham dan kak Isa baik juga 😁.
 
-**Mengakses keempat URL di poin 2 menggunakan Postman, membuat screenshot dari hasil akses URL pada Postman**
+**  Mengakses keempat URL di poin 2 menggunakan Postman, membuat screenshot dari hasil akses URL pada Postman**
 
 ![alt text](image.png)
 ![alt text](image-1.png)
