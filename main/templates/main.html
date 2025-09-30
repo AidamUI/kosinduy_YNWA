@@ -1,116 +1,134 @@
-{% extends 'base.html' %}
-{% block content %}
-{% include 'navbar.html' %}
+{% extends 'base.html' %} {% block content %} {% include 'navbar.html' %} {%
+load static %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
+<div class="bg-red-800 text-white min-h-screen px-2 pb-6 sm:px-6 lg:px-8">
+  <div
+    class="relative w-screen left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] h-56 sm:h-72 md:h-80 lg:h-96"
+    style="margin-top: 0; margin-bottom: 1.5rem"
+  >
+    <img
+      src="{% static 'kosinduy_owl.jpg' %}"
+      alt="YNWA Landscape"
+      class="absolute inset-0 w-full h-full object-cover brightness-50"
+    />
+    <div class="absolute inset-0 flex items-center justify-center">
+      <a
+        href="#products"
+        class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-lg text-xl shadow-lg transition"
+        >YNWA</a
+      >
+    </div>
+  </div>
 
-        h2 {
-            color: #00A398;
-            font-weight: bolder;
-        }
+  <div
+    class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4"
+  >
+    <div class="flex flex-col gap-2">
+      <a
+        href="{% url 'main:logout' %}"
+        class="bg-red-700 hover:bg-red-900 text-white font-bold py-2 px-4 rounded transition"
+      >
+        Logout
+      </a>
+      <h4 class="text-lg">
+        Current User:
+        <span class="font-semibold text-yellow-400"
+          >{{request.user.username}}</span
+        >
+      </h4>
+      <h5 class="text-sm text-yellow-400">
+        Sesi terakhir login: {{ last_login }}
+      </h5>
+    </div>
+    <div class="flex gap-2">
+      <a
+        href="?filter=all"
+        class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition"
+      >
+        All Products
+      </a>
+      <a
+        href="?filter=my"
+        class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded transition"
+      >
+        My Products
+      </a>
+    </div>
+  </div>
 
-        body {
-            background-color: #C8102E; 
-            color: white; 
-        }
+  <a
+    href="{% url 'main:add_product' %}"
+    class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded mb-6 inline-block transition"
+  >
+    + Add Product
+  </a>
 
-        .biodata {
-            background-color: antiquewhite;
-            width: fit-content;
-        }
-
-        .product-card {
-            background-color: #1a1a1a;
-            border: 1px solid #333;
-            padding: 15px;
-            border-radius: 8px;
-            width: 300px;
-            color: white;
-        }
-
-        .product-card h3 {
-            color: #f0f0f0;
-        }
-    </style>
-</head>
-<body>
-
-<!-- <h2>All Items</h2> -->
- <div class="biodata">
-    <h2>{{npm}}</h2>
-    <h2>{{name}}</h2>
-    <h2>{{class}}</h2>
-</div>
-
-<!-- logout -->
-<a href="{% url 'main:logout' %}">
-  <button>Logout</button>
-</a>
-<h4>Current User: {{request.user.username}}</h4>
-<h5>Sesi terakhir login: {{ last_login }}</h5>
-
-<!-- filter -->
- <a href="?filter=all">
-    <button type="button">All Products</button>
-</a>
-<a href="?filter=my">
-    <button type="button">My Products</button>
-</a>
-
-<a href="{% url 'main:add_product' %}">
-  <button>+ Add Product</button>
-</a>
-
-<div style="display: flex; flex-wrap: wrap; gap: 20px;">
+  <div
+    id="products"
+    class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+  >
     {% for product in products %}
-        <div class="product-card">
-            {% if product.thumbnail %}
-                <img src="{{ product.thumbnail }}" alt="{{ product.name }}" style="max-width: 100%; height: auto; border-radius: 4px;">
-            {% endif %}
-            <h3>{{ product.name }}</h3>
-            <p><strong>Price:</strong> {{ product.price }}</p>
-            <p><strong>Category:</strong> {{ product.category }}</p>
-            <p>{{ product.description }}</p>
-            <p>
-                <strong>Stock:</strong> {{ product.stock }}
-                {% if product.is_in_stock %}
-                    <span style="color: green;">(In Stock)</span>
-                {% else %}
-                    <span style="color: red;">(Out of Stock)</span>
-                {% endif %}
-            </p>
-            {% if product.is_featured %}
-                <p><strong>&#9733; Featured Item</strong></p>
-            {% endif %}
-            <a href="{% url 'main:show_product' product.id %}">
-                <button>More Detail</button>
-            </a>
-            {% if user.is_authenticated and product.user == user %}
-            <a href="{% url 'main:edit_product' product.pk %}">
-                <button>
-                    Edit
-                </button>
-            </a>
-            <a href="{% url 'main:delete_product' product.pk %}">
-                <button>
-                    Delete
-                </button>
-            </a>
-            {% endif %}
+    <div
+      class="product-card bg-white rounded-lg shadow-lg overflow-hidden flex flex-col transition-transform duration-200 hover:scale-105 hover:shadow-2xl"
+    >
+      {% if product.thumbnail %}
+      <img
+        src="{{ product.thumbnail }}"
+        alt="{{ product.name }}"
+        class="w-full h-48 object-cover border-b-4 border-green-600"
+      />
+      {% endif %}
+      <div class="p-4 flex-1 flex flex-col justify-between">
+        <div>
+          <h3 class="text-lg font-bold text-red-800">{{ product.name }}</h3>
+          <p class="text-green-600">
+            <strong>Price:</strong> {{ product.price }}
+          </p>
+          <p class="text-green-600">
+            <strong>Category:</strong> {{ product.category }}
+          </p>
+          <p class="text-red-800 mt-2">{{ product.description }}</p>
         </div>
-    {% empty %}
-        <p>No products found.</p>
+        <div class="mt-2">
+          <strong>Stock:</strong>
+          <span class="text-green-600">{{ product.stock }}</span>
+          {% if product.is_in_stock %}
+          <span class="text-green-600 font-semibold">(In Stock)</span>
+          {% else %}
+          <span class="text-red-600 font-semibold">(Out of Stock)</span>
+          {% endif %}
+        </div>
+        {% if product.is_featured %}
+        <p class="text-yellow-500 font-bold mt-2">&#9733; Featured Item</p>
+        {% endif %}
+        <div
+          class="mt-4 flex flex-col gap-2 sm:flex-row sm:justify-between items-center"
+        >
+          <a
+            href="{% url 'main:show_product' product.id %}"
+            class="text-green-600 hover:text-yellow-500 font-semibold transition"
+            >More Detail</a
+          >
+          {% if user.is_authenticated and product.user == user %}
+          <div class="flex gap-2">
+            <a
+              href="{% url 'main:edit_product' product.pk %}"
+              class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-1 px-3 rounded text-xs transition"
+            >
+              Edit
+            </a>
+            <a
+              href="{% url 'main:delete_product' product.pk %}"
+              class="bg-red-700 hover:bg-red-900 text-white font-bold py-1 px-3 rounded text-xs transition"
+            >
+              Delete
+            </a>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
     {% endfor %}
+  </div>
 </div>
-
-<img src="{{liverpool_logo}}" alt="">
-
-</body>
-</html>
-    
-{% endblock content%}
+{% endblock %}

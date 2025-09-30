@@ -1,21 +1,36 @@
-<nav>
-  <h1>Football News</h1>
+<nav class="bg-red-900 text-white p-4">
+  <div
+    class="container mx-auto flex flex-col sm:flex-row items-center justify-between"
+  >
+    <div class="flex flex-col sm:flex-row items-center gap-4">
+      <h1 class="text-xl font-bold text-yellow-500 mb-2 sm:mb-0">
+        Kosinduy YNWA
+      </h1>
 
-  <ul>
-    <li><a href="/">Home</a></li>
-    <li><a href="{% url 'main:add_product' %}">Create News</a></li>
-  </ul>
-
-  {% if user.is_authenticated %}
-    <div>
-      <span>Welcome, {{ name|default:user.username }}</span>
-      <span>{{ npm|default:"Student" }} - {{ class|default:"Class" }}</span>
-      <a href="{% url 'main:logout' %}">Logout</a>
+      <ul class="flex space-x-4 mb-2 sm:mb-0">
+        <li><a href="/" class="hover:text-green-500">Home</a></li>
+        <li>
+          <a href="{% url 'main:add_product' %}" class="hover:text-green-500"
+            >Create Product</a
+          >
+        </li>
+      </ul>
     </div>
-  {% else %}
-    <div>
-      <a href="{% url 'main:login' %}">Login</a>
-      <a href="{% url 'main:register' %}">Register</a>
+    <div class="flex gap-2 items-center">
+      {% if user.is_authenticated %}
+      <span class="text-green-500"
+        >{{ name|default:user.username }}</span
+      >
+      <span class="text-yellow-500"
+        >{{ npm|default:"Student" }} - {{ class|default:"Class" }}</span
+      >
+      <a href="{% url 'main:logout' %}" class="hover:text-yellow-500">Logout</a>
+      {% else %}
+      <a href="{% url 'main:login' %}" class="hover:text-green-500">Login</a>
+      <a href="{% url 'main:register' %}" class="hover:text-green-500"
+        >Register</a
+      >
+      {% endif %}
     </div>
-  {% endif %}
+  </div>
 </nav>

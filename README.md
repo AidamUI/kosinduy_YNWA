@@ -4,10 +4,10 @@
 
 Implementasi proyek dimulai dengan membuat kerangka proyek Django menggunakan django-admin startproject kosinduy_YNWA dan aplikasi main dengan python manage.py startapp main. Setelah itu, saya melakukan beberapa konfigurasi: di kosinduy_YNWA/settings.py, saya mendaftarkan aplikasi baru dengan menambahkan 'main' ke dalam list INSTALLED_APPS. Selanjutnya, pada file kosinduy_YNWA/urls.py, saya mengimpor include dan menambahkan path('', include('main.urls')) untuk melakukan routing ke aplikasi main. Di dalam aplikasi main, saya membuat file urls.py baru dan mendefinisikan path('', show_main, name='show_main') untuk memetakan URL root ke view yang sesuai. Pada main/models.py, saya membuat class Product(models.Model) dan mendefinisikan semua atribut, yaitu: name dengan tipe CharField, price dengan tipe IntegerField, description dengan tipe TextField, thumbnail dengan tipe URLField, category dengan tipe CharField, is_featured dengan tipe BooleanField, dan stock dengan tipe PositiveIntegerField. Kemudian, di main/views.py, saya membuat fungsi show_main yang mengimpor model Product, mengambil semua datanya melalui Product.objects.all(), dan mengirimkannya dalam sebuah context ke template. Saya juga membuat direktori main/templates/ dan file main.html di dalamnya, yang saya isi dengan kode HTML dan sintaks Django untuk menampilkan data produk secara dinamis. Terakhir, untuk persiapan deployment, saya membuat file requirements.txt, mengkonfigurasi .env.prod dengan kredensial PWS, dan menyesuaikan settings.py untuk ALLOWED_HOSTS serta database produksi yang digunakan.
 
-
 **Buatlah bagan yang berisi request client ke web aplikasi berbasis Django beserta responnya dan jelaskan pada bagan tersebut kaitan antara urls.py, views.py, models.py, dan berkas html.**
 
 Alur request-response di aplikasi saya adalah sebagai berikut:
+
 1. Client (Browser) mengirim request ke URL.
 2. kosinduy_YNWA/urls.py menerima request dan meneruskannya ke main/urls.py.
 3. main/urls.py mencocokkan URL dengan pola yang ada dan memanggil fungsi show_main di views.py.
@@ -37,16 +37,13 @@ sequenceDiagram
 
 Kaitannya adalah urls.py bertindak sebagai pemetaan URL yang mengarahkan request ke views.py. Kemudian, views.py berfungsi sebagai otak yang memproses logika, berinteraksi dengan models.py untuk mengelola data, dan memilih html template yang sesuai untuk ditampilkan. Terakhir, berkas .html adalah lapisan presentasi yang menerima data dari view dan menampilkannya kepada pengguna.
 
-
 **Jelaskan peran settings.py dalam proyek Django!**
 
 'settings.py' adalah file konfigurasi utama proyek Django. Perannya adalah sebagai pusat kendali di mana saya mengatur dan mengkonfigurasi semua hal penting, seperti mendaftarkan aplikasi di 'INSTALLED_APPS', mengkonfigurasi koneksi database di 'DATABASES', menyimpan 'SECRET_KEY' untuk keamanan, mengatur mode 'DEBUG', dan mendaftarkan 'ALLOWED_HOST' yang diizinkan mengakses aplikasi.
 
-
 **Bagaimana cara kerja migrasi database di Django?**
 
 Migrasi database di Django bekerja dalam dua langkah. Pertama, 'python manage.py makemigrations' akan menyimpan perubahan pada models.py dan membuat file rencana migrasi di directory migrations (0001_initial.py etc). File ini berisi instruksi tentang perubahan yang akan dilakukan pada database. Kedua, 'python manage.py migrate' akan mengeksekusi rencana tersebut dan menerapkan perubahan pada struktur database yang sebenarnya. Proses ini memastikan perubahan database dilakukan secara aman dan terkontrol dengan pertama menyimpan blueprint kemudian baru menerapkannya.
-
 
 **Menurut Anda, dari semua framework yang ada, mengapa framework Django dijadikan permulaan pembelajaran pengembangan perangkat lunak?**
 
@@ -54,14 +51,9 @@ Menurut saya, Django adalah pilihan yang sangat tepat untuk memulai belajar peng
 Django adalah framework yang sangat lengkap. Terdapat banyak fitur penting yang sudah tersedia langsung untuk digunakan sehingga tidak perlu repot mencari dan memasang fitur tambahan tambahan. Contohnya adalah panel admin bawaan Django yang bisa dibuat otomatis untuk mengelola data dan sistem untuk berinteraksi dengan database menggunakan Python (ORM) yang lebih intuitif dari menulis SQL. Ini membuat pemula bisa fokus memahami alur kerja pengembangan web, tidak terjebak di aspek teknis pemasangan komponen.
 Selain itu, Django menggunakan bahasa Python yang dikenal sebagai bahasa yang mudah dipelajari karena sintaksnya yang sederhana dan mudah dibaca. Terutama di Fasilkom UI, Python merupakan bahasa pemrograman pertama yang diajarkan sehingga rata-rata mahasiswa paling mahir menggunakan python dibanding bahasa pemrograman lain. Dengan itu, keterampilan pemrograman rata-rata mahasiswa Fasilkom UI sudah cukup untuk membangun aplikasi web menggunakan Python (Django). Jadi, proses belajar tidak terlalu berat karena tidak perlu mempelajari bahasa dan framework baru di saat yang bersamaan.
 
-
 **Apakah ada feedback untuk asisten dosen tutorial 1 yang telah kamu kerjakan sebelumnya?**
 
 Saya ingin mengucapkan terima kasih kak sudah membantu selama tutorial, walaupun terkadang pertanyaannya agak konyol 😅. Penjelasannya kakak-kakak asdos sangat jelas dan mudah diikuti. Untuk kedepannya, mungkin penjelasan lebih dalam mengenai cara kerja program/apa yang dilakukan kode yang baru kita tulis bisa diberi penjelasan karena setelah kelas saya banyak mencari tahu sendiri. Selain itu, best practice dalam penulisan kode Django juga boleh diberikan ke kita. Terima Kasih Kak!
-
-
-
-
 
 # TUGAS 3
 
@@ -93,16 +85,12 @@ Terakhir, saya menambahkan routing baru di urls.py untuk menghubungkan setiap fu
 
 Menurut saya tidak ada feedback lebih lanjut dari tutorial 1. Saya sangat merasa terbantu ketika bertanya dan tutorial yang ada juga sudah sangat jelas dan informatif. Mungkin saya bisa sebutkan terkait demo tugas yang awalnya saya kira akan sangat tegang karena pemahaman saya yang mungkin masih terbatas, tetapi ternyata saya lumayan paham dan kak Isa baik juga 😁.
 
-**  Mengakses keempat URL di poin 2 menggunakan Postman, membuat screenshot dari hasil akses URL pada Postman**
+** Mengakses keempat URL di poin 2 menggunakan Postman, membuat screenshot dari hasil akses URL pada Postman**
 
 ![alt text](image.png)
 ![alt text](image-1.png)
 ![alt text](image-2.png)
 ![alt text](image-3.png)
-
-
-
-
 
 # TUGAS 4
 
@@ -114,7 +102,7 @@ Kelebihan utama dari AuthenticationForm adalah kemudahan integrasi dengan sistem
 
 **Apa perbedaan antara autentikasi dan otorisasi? Bagaiamana Django mengimplementasikan kedua konsep tersebut?**
 
-Perbedaan antara autentikasi dan otorisasi adalah tujuan dan prosesnya. Autentikasi adalah proses untuk memastikan identitas user dengan memverifikasi apakah user benar-benar yang dia klaim. Sementara itu, otorisasi adalah proses untuk menentukan hak akses user, yaitu apakah user yang sudah terautentikasi boleh melakukan aksi tertentu di aplikasi. 
+Perbedaan antara autentikasi dan otorisasi adalah tujuan dan prosesnya. Autentikasi adalah proses untuk memastikan identitas user dengan memverifikasi apakah user benar-benar yang dia klaim. Sementara itu, otorisasi adalah proses untuk menentukan hak akses user, yaitu apakah user yang sudah terautentikasi boleh melakukan aksi tertentu di aplikasi.
 
 Pada Django, autentikasi diimplementasikan melalui User model bawaan, AuthenticationForm, dan session framework yang menyimpan status login user. Django juga menyediakan decorator seperti @login_required untuk membatasi akses hanya kepada user yang sudah login. Untuk otorisasi, Django memiliki sistem permission yang bisa diatur per model (add, change, delete, view), group untuk mengelompokkan user dengan hak akses tertentu, serta method seperti user.has_perm() dan decorator @permission_required untuk mengecek dan membatasi akses berdasarkan hak user. Dengan kombinasi autentikasi dan otorisasi ini, Django memastikan hanya user yang berhak yang bisa mengakses dan melakukan aksi tertentu di aplikasi.
 
@@ -134,3 +122,36 @@ Akses ke halaman utama dan detail produk saya batasi hanya untuk user yang sudah
 
 Di bagian model, setiap produk saya hubungkan ke user pembuatnya dengan ForeignKey ke model User. Dengan cara ini, setiap produk yang ditambahkan akan tercatat siapa pembuatnya, dan fitur filter "My Products" bisa berjalan dengan baik. Setelah mengubah model, saya jalankan migrasi database agar struktur data sesuai kebtuhan.
 
+# TUGAS 5
+
+**Jika terdapat beberapa CSS selector untuk suatu elemen HTML, jelaskan urutan prioritas pengambilan CSS selector tersebut!**
+
+Prioritas CSS ditentukan oleh specificity. Urutan dari yang tertinggi hingga terendah adalah: deklarasi dengan `!important`, gaya inline pada elemen (`style="…"`), selector berbasis ID (`#id`), selector berbasis class/attribute/pseudo-class (`.class`, `[type=…]`, `:hover`), lalu selector tag/pseudo-element (`div`, `p`, `::before`). Apabila nilai specificity sama, aturan yang muncul paling akhir pada berkas CSS yang dipakai. Perlu diperhatikan bahwa pewarisan (inheritance) hanya berlaku untuk properti tertentu dan tidak mengalahkan aturan yang lebih spesifik; penggunaan `!important` sebaiknya dibatasi karena menyulitkan pemeliharaan kode.
+
+**Mengapa responsive design menjadi konsep yang penting dalam pengembangan aplikasi web? Berikan contoh aplikasi yang sudah dan belum menerapkan responsive design, serta jelaskan mengapa!**
+
+Responsive design memastikan antarmuka dan konten dapat beradaptasi dengan beragam ukuran layar dan kepadatan piksel, sehingga keterbacaan, navigasi, dan aksesibilitas tetap terjaga pada ponsel, tablet, hingga desktop. Penerapan ini juga berdampak pada performa bisnis dan teknis: pengalaman pengguna lebih baik, tingkat pentalan berkurang, serta mendapat penilaian positif pada mesin pencari yang memprioritaskan situs ramah perangkat bergerak.
+
+Aplikasi yang telah menerapkan responsive design ditandai oleh tata letak yang berubah secara proporsional, tipografi yang menyesuaikan, serta komponen yang tetap mudah diinteraksi pada layar kecil. Sebaliknya, aplikasi yang belum responsif biasanya memaksa pengguna melakukan zoom dan scroll horizontal karena layout tetap (fixed) dan tidak memanfaatkan media query, unit fluida, atau sistem layout modern.
+
+**Jelaskan perbedaan antara margin, border, dan padding, serta cara untuk mengimplementasikan ketiga hal tersebut!**
+
+Margin adalah ruang di luar kotak elemen yang berfungsi memisahkan elemen dari elemen lainnya. Border adalah garis pembatas yang mengelilingi elemen di antara margin dan padding. Padding adalah ruang di dalam elemen, yaitu jarak antara konten dan border. Dalam box model urutannya dari luar ke dalam adalah: margin -> border -> padding -> konten. Implementasi dilakukan melalui properti CSS terkait, misalnya `margin`, `border` (dengan ketebalan, gaya, dan warna), serta `padding`. Seluruh properti tersebut mendukung penulisan ringkas (shorthand) maupun per sisi, sehingga jarak dan batas dapat diatur sesuai kebutuhan tata letak.
+
+**Jelaskan konsep flex box dan grid layout beserta kegunaannya!**
+
+Flexbox adalah model tata letak satu dimensi yang mengatur distribusi ruang dan perataan item pada satu sumbu (baris atau kolom). Flexbox efektif untuk menyusun komponen seperti navbar, toolbar, dan deretan kartu karena menyediakan kontrol perataan (alignment) dan distribusi (justification) yang fleksibel.
+
+Grid adalah model tata letak dua dimensi yang memungkinkan pengaturan baris dan kolom secara bersamaan. Grid lebih sesuai untuk menyusun kerangka halaman, galeri, atau dashboard dengan pola yang kompleks. Dalam praktiknya, grid dapat digunakan untuk struktur utama halaman, sedangkan flexbox dimanfaatkan di dalam masing‑masing area grid untuk merapikan isi komponen. Pendekatan ini menghasilkan tata letak yang bersih, konsisten, dan responsif.
+
+**Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step (bukan hanya sekadar mengikuti tutorial)!**
+
+Saya mulai dengan mengimplementasikan fitur edit dan delete product di aplikasi. Pertama, saya membuat fungsi edit_product di views.py yang menerima parameter id untuk mencari product berdasarkan primary key. Fungsi ini menggunakan ProductForm dengan parameter instance=product sehingga data product yang ada bisa diedit lewat form. Setelah form valid dan disubmit, perubahan langsung tersimpan ke database, lalu diarahkan kembali ke halaman utama. Selanjutnya, saya membuat template edit_product.html untuk menampilkan form edit.
+
+Untuk fitur delete, saya menambahkan fungsi delete_product di views.py yang mengambil product berdasarkan id lalu menghapusnya dengan method .delete(). Setelah itu, user diarahkan kembali ke halaman utama. Kedua fungsi ini saya tambahkan ke urls.py agar bisa diakses, misalnya /product/<uuid:id>/edit dan /product/<uuid:id>/delete. Di template daftar product, saya menambahkan tombol Edit dan Delete pada setiap card product yang hanya muncul jika user adalah pemilik produk tersebut.
+
+Setelah fitur edit dan delete berjalan, saya melanjutkan ke kustomisasi desain template dengan Tailwind CSS. Pertama, saya menyambungkan aplikasi Django dengan Tailwind menggunakan script CDN di base.html. Saya menambahkan meta viewport agar tampilan lebih responsif di mobile.
+
+Kemudian, saya melakukan styling. Pada halaman login dan register saya buat lebih menarik dengan menambahkan form yang terpusat di tengah layar, menggunakan card dengan shadow, border rounded, serta warna tombol yang konsisten dengan tema aplikasi. Halaman tambah product dan edit product saya kustomisasi agar form tampil rapi dengan padding, margin, dan tombol submit berwarna hijau menggunakan utility classes dari Tailwind. Halaman detail product saya tambahkan styling pada judul, deskripsi, dan gambar product agar lebih rapi dan mudah dibaca. Untuk halaman daftar product, saya membuat layout responsive menggunakan grid Tailwind. Jika belum ada product, halaman menampilkan gambar ilustrasi kosong dan teks "Belum ada product yang terdaftar". Jika ada product, setiap product ditampilkan dalam bentuk card yang berisi gambar thumbnail, nama produk, harga, deskripsi singkat, serta tombol Edit dan Delete. Card ini saya lengkapi dengan hover effect dan shadow agar lebih interaktif.
+
+Terakhir, saya menambahkan navigation bar (navbar) di file navbar.html lalu menyertakannya di template utama menggunakan {% include 'navbar.html' %}. Navbar berisi link menuju halaman utama, tambah product, login/register atau logout sesuai status autentikasi user. Dengan bantuan Tailwind, navbar ini bersifat responsive: pada layar desktop, menu tampil horizontal, sedangkan pada layar mobile menu berubah menjadi stacked agar tetap mudah digunakan.

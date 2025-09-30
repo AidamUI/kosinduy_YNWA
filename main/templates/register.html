@@ -1,32 +1,31 @@
-{% extends 'base.html' %}
-
-{% block meta %}
+{% extends 'base.html' %} {% block meta %}
 <title>Register</title>
-{% endblock meta %}
+{% endblock meta %} {% block content %}
+<div class="flex flex-col items-center justify-center min-h-screen bg-red-800">
+  <div class="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md">
+    <h1 class="text-2xl font-bold text-center text-red-800">Register</h1>
 
-{% block content %}
+    <form method="POST" class="space-y-6">
+      {% csrf_token %} {{ form.as_p }}
+      <div>
+        <button
+          type="submit"
+          class="w-full px-4 py-2 text-sm font-medium text-white bg-green-600 border border-transparent rounded-md shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+        >
+          Daftar
+        </button>
+      </div>
+    </form>
 
-<div>
-  <h1>Register</h1>
-
-  <form method="POST">
-    {% csrf_token %}
-    <table>
-      {{ form.as_table }}
-      <tr>
-        <td></td>
-        <td><input type="submit" name="submit" value="Daftar" /></td>
-      </tr>
-    </table>
-  </form>
-
-  {% if messages %}
-  <ul>
-    {% for message in messages %}
-    <li>{{ message }}</li>
-    {% endfor %}
-  </ul>
-  {% endif %}
+    {% if messages %}
+    <div class="p-4 mt-6 bg-yellow-100 rounded-md">
+      <ul class="text-sm text-yellow-700 list-disc list-inside">
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+  </div>
 </div>
-
 {% endblock content %}

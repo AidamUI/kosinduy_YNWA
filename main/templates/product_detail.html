@@ -1,23 +1,42 @@
-{% extends 'base.html' %}
-{% block content %}
-<p><a href="{% url 'main:show_main' %}"><button>← Back to Product List</button></a></p>
+{% extends 'base.html' %} {% block content %}
+<div
+  class="container mx-auto mt-10 p-5 bg-red-800 text-white shadow-lg rounded-lg"
+>
+  <a
+    href="{% url 'main:show_main' %}"
+    class="text-green-500 hover:text-green-400 text-sm"
+    >← Back to Product List</a
+  >
 
-<h1>{{ product.name }}</h1>
-<p><b>{{ product.get_category_display }}</b>{% if product.is_featured %} | 
-    <b>Featured</b>{% endif %} 
-    | Stock: {{ product.stock }}</p>
+  <h1 class="text-4xl font-bold my-4 text-yellow-500">{{ product.name }}</h1>
+  <p class="text-lg mb-4">
+    <span class="font-semibold text-green-500"
+      >{{ product.get_category_display }}</span
+    >
+    {% if product.is_featured %}
+    <span class="text-yellow-500 font-bold">| Featured</span>
+    {% endif %} | Stock:
+    <span class="font-semibold text-green-500">{{ product.stock }}</span>
+  </p>
 
-{% if product.thumbnail %}
-<img src="{{ product.thumbnail }}" alt="Product thumbnail" width="300">
-<br /><br />
-{% endif %}
+  {% if product.thumbnail %}
+  <img
+    src="{{ product.thumbnail }}"
+    alt="Product thumbnail"
+    class="w-full md:w-1/2 rounded-md shadow-md mb-6 border-4 border-green-500"
+  />
+  {% endif %}
 
-<p>{{ product.description }}</p>
+  <p class="leading-relaxed">{{ product.description }}</p>
 
-{% if product.user %}
-    <p>Author: {{ product.user.username }}</p>
-{% else %}
-    <p>Author: Anonymous</p>
-{% endif %}
-
+  <p class="mt-6">
+    Author: {% if product.user %}
+    <span class="font-semibold text-green-500"
+      >{{ product.user.username }}</span
+    >
+    {% else %}
+    <span class="font-semibold text-yellow-500">Anonymous</span>
+    {% endif %}
+  </p>
+</div>
 {% endblock %}

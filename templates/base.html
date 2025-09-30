@@ -1,21 +1,15 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     {% block meta %}
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <style>
-        body {
-            background-color: #C8102E; /* Liverpool Red */
-        }
-    </style>
     {% endblock meta %}
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="{% static 'css/global.css' %}"/>
-</head>
-
-<body>
+    <link rel="stylesheet" href="{% static 'css/global.css' %}" />
+  </head>
+  <body class="bg-red-800 text-white">
     {% block content %} {% endblock content %}
-</body>
+  </body>
 </html>
