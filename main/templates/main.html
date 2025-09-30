@@ -1,8 +1,11 @@
-{% extends 'base.html' %} {% block content %} {% include 'navbar.html' %}
-{% load static %}
+{% extends 'base.html' %} {% block content %} {% include 'navbar.html' %} {%
+load static %}
 
 <div class="bg-red-800 text-white min-h-screen px-2 pb-6 sm:px-6 lg:px-8">
-  <div class="relative w-screen left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] h-56 sm:h-72 md:h-80 lg:h-96" style="margin-top:0;margin-bottom:1.5rem;">
+  <div
+    class="relative w-screen left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] h-56 sm:h-72 md:h-80 lg:h-96"
+    style="margin-top: 0; margin-bottom: 1.5rem"
+  >
     <img
       src="{% static 'kosinduy_owl.jpg' %}"
       alt="YNWA Landscape"
@@ -60,7 +63,8 @@
     + Add Product
   </a>
 
-  <div id="products"
+  <div
+    id="products"
     class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
   >
     {% for product in products %}
