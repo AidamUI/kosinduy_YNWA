@@ -1,3 +1,7 @@
+{% extends 'base.html' %}
+{% block content %}
+{% include 'navbar.html' %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -86,6 +90,18 @@
             <a href="{% url 'main:show_product' product.id %}">
                 <button>More Detail</button>
             </a>
+            {% if user.is_authenticated and product.user == user %}
+            <a href="{% url 'main:edit_product' product.pk %}">
+                <button>
+                    Edit
+                </button>
+            </a>
+            <a href="{% url 'main:delete_product' product.pk %}">
+                <button>
+                    Delete
+                </button>
+            </a>
+            {% endif %}
         </div>
     {% empty %}
         <p>No products found.</p>
@@ -96,3 +112,5 @@
 
 </body>
 </html>
+    
+{% endblock content%}
