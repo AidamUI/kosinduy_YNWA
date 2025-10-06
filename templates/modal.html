@@ -83,27 +83,23 @@
       }, 150); 
   }
 
-   async function addProductEntry() {
-    await fetch("{% url 'main:add_product_entry_ajax' %}", {
-      method: "POST",
-      body: new FormData(document.querySelector('#productForm')),
-    })
-
-    document.getElementById("productForm").reset();
-    hideModal();
-
-    document.getElementById("newsForm").addEventListener("submit", function(e) {
+  document.addEventListener("DOMContentLoaded", function() {
+  document.getElementById("productForm").addEventListener("submit", function(e) {
     e.preventDefault();
-    addNewsEntry();
-    })
-      
-    // Show toast notification
-    showToast('Product added successfully!', '', 'success');
+    addProductEntry();
+  });
+});
 
-    // Dispatch custom event to notify main.html about new data
-    document.dispatchEvent(new CustomEvent('productAdded'));
+async function addProductEntry() {
+  await fetch("{% url 'main:add_product_entry_ajax' %}", {
+    method: "POST",
+    body: new FormData(document.querySelector('#productForm')),
+  });
 
-    return false;
-    }
-
+  document.getElementById("productForm").reset();
+  hideModal();
+  showToast('Product added successfully!', '', 'success');
+  document.dispatchEvent(new CustomEvent('productAdded'));
+  return false;
+}
 </script>

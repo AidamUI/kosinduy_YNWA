@@ -3,139 +3,226 @@
 {% block content %}
 {% include 'navbar.html' %}
 
-<div class="bg-red-800 text-white min-h-screen px-2 pb-6 sm:px-6 lg:px-8">
-  <div
-    class="relative w-screen left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] h-56 sm:h-72 md:h-80 lg:h-96"
-    style="margin-top: 0; margin-bottom: 1.5rem"
-  >
-    <img
-      src="{% static 'kosinduy_owl.jpg' %}"
-      alt="YNWA Landscape"
-      class="absolute inset-0 w-full h-full object-cover brightness-50"
-    />
+<div class="bg-gradient-to-br from-red-900 via-red-800 to-yellow-200 text-white min-h-screen px-2 pb-6 sm:px-6 lg:px-8" style="background: linear-gradient(135deg, #7f1d1d 0%, #b91c1c 60%, #fef3c7 100%);">
+  <div class="relative w-screen left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] h-56 sm:h-72 md:h-80 lg:h-96" style="margin-top: 0; margin-bottom: 1.5rem">
+    <img src="{% static 'kosinduy_owl.jpg' %}" alt="YNWA Landscape" class="absolute inset-0 w-full h-full object-cover brightness-50" />
     <div class="absolute inset-0 flex items-center justify-center">
-      <a
-        href="#products"
-        class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-lg text-xl shadow-lg transition"
-        >YNWA</a
-      >
-        <!-- Button to open modal -->
-    <button onclick="showModal()" class="inline-flex items-center px-4 py-2 bg-white text-green-600 font-semibold outline outline-2 outline-green-600 outline-offset-[-2px] rounded-md hover:bg-green-600 hover:text-white transition-colors mb-4">
-      Create Product by AJAX
-    </button>
-
+      <a href="#products" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-lg text-xl shadow-lg transition">YNWA</a>
+      <!-- <button onclick="showModal()" class="inline-flex items-center px-4 py-2 bg-white text-green-600 font-semibold outline outline-2 outline-green-600 outline-offset-[-2px] rounded-md hover:bg-green-600 hover:text-white transition-colors mb-4">Create Product by AJAX</button> -->
     </div>
   </div>
 
-  <div
-    class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4"
-  >
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
     <div class="flex flex-col gap-2">
-      <a
-        href="{% url 'main:logout' %}"
-        class="bg-red-700 hover:bg-red-900 text-white font-bold py-2 px-4 rounded transition"
-      >
-        Logout
-      </a>
-      <h4 class="text-lg">
-        Current User:
-        <span class="font-semibold text-yellow-400"
-          >{{request.user.username}}</span
-        >
-      </h4>
-      <h5 class="text-sm text-yellow-400">
-        Sesi terakhir login: {{ last_login }}
-      </h5>
+      <a href="{% url 'main:logout' %}" class="bg-red-700 hover:bg-red-900 text-white font-bold py-2 px-4 rounded transition">Logout</a>
+      <h4 class="text-lg">Current User: <span class="font-semibold text-yellow-400">{{request.user.username}}</span></h4>
+      <h5 class="text-sm text-yellow-400">Sesi terakhir login: {{ last_login }}</h5>
     </div>
     <div class="flex gap-2">
-      <a
-        href="?filter=all"
-        class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition"
-      >
-        All Products
-      </a>
-      <a
-        href="?filter=my"
-        class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded transition"
-      >
-        My Products
-      </a>
+      <a id="filter-all" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition">All Products</a>
+      <a id="filter-my" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded transition">My Products</a>
     </div>
   </div>
 
-  <a
-    href="{% url 'main:add_product' %}"
-    class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded mb-6 inline-block transition"
-  >
-    + Add Product
-  </a>
+  <button onclick="showModal()" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded mb-6 inline-block transition">+ Add Product</button>
 
-  <div
-    id="products"
-    class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
-  >
-    {% for product in products %}
-    <div
-      class="product-card bg-white rounded-lg shadow-lg overflow-hidden flex flex-col transition-transform duration-200 hover:scale-105 hover:shadow-2xl"
-    >
-      {% if product.thumbnail %}
-      <img
-        src="{{ product.thumbnail }}"
-        alt="{{ product.name }}"
-        class="w-full h-48 object-cover border-b-4 border-green-600"
-      />
-      {% endif %}
-      <div class="p-4 flex-1 flex flex-col justify-between">
-        <div>
-          <h3 class="text-lg font-bold text-red-800">{{ product.name }}</h3>
-          <p class="text-green-600">
-            <strong>Price:</strong> {{ product.price }}
-          </p>
-          <p class="text-green-600">
-            <strong>Category:</strong> {{ product.category }}
-          </p>
-          <p class="text-red-800 mt-2">{{ product.description }}</p>
-        </div>
-        <div class="mt-2">
-          <strong>Stock:</strong>
-          <span class="text-green-600">{{ product.stock }}</span>
-          {% if product.is_in_stock %}
-          <span class="text-green-600 font-semibold">(In Stock)</span>
-          {% else %}
-          <span class="text-red-600 font-semibold">(Out of Stock)</span>
-          {% endif %}
-        </div>
-        {% if product.is_featured %}
-        <p class="text-yellow-500 font-bold mt-2">&#9733; Featured Item</p>
-        {% endif %}
-        <div
-          class="mt-4 flex flex-col gap-2 sm:flex-row sm:justify-between items-center"
-        >
-          <a
-            href="{% url 'main:show_product' product.id %}"
-            class="text-green-600 hover:text-yellow-500 font-semibold transition"
-            >More Detail</a
-          >
-          {% if user.is_authenticated and product.user == user %}
-          <div class="flex gap-2">
-            <a
-              href="{% url 'main:edit_product' product.pk %}"
-              class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-1 px-3 rounded text-xs transition"
-            >
-              Edit
-            </a>
-            <a
-              href="{% url 'main:delete_product' product.pk %}"
-              class="bg-red-700 hover:bg-red-900 text-white font-bold py-1 px-3 rounded text-xs transition"
-            >
-              Delete
-            </a>
-          </div>
-          {% endif %}
-        </div>
-      </div>
+  <!-- AJAX containers -->
+  <div id="loading" class="bg-white rounded-lg border border-gray-200 p-12 text-center hidden">
+    <svg class="animate-spin h-8 w-8 text-green-600 inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+    </svg>
+    <p class="text-gray-600 mt-3">Loading products...</p>
+  </div>
+  <div id="error" class="hidden text-center text-red-600"></div>
+  <div id="grid" class="hidden grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
+  <div id="empty" class="bg-white rounded-lg border border-gray-200 p-12 text-center hidden">
+    <div class="w-32 h-32 mx-auto mb-4">
+      <img src="{% static 'image/no-news.png' %}" alt="No products available" class="w-full h-full object-contain">
     </div>
-    {% endfor %}
+    <h3 class="text-lg font-medium text-gray-900 mb-2">No products found</h3>
+    <p class="text-gray-500 mb-6">Be the first to add a product to the shop.</p>
+    <a href="{% url 'main:add_product' %}" class="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors">Add Product</a>
   </div>
 </div>
+</div>
+
+<script>
+// Configuration
+const PRODUCT_API_ENDPOINT = "{% url 'main:show_json' %}";
+const CURRENT_USER_ID = "{{ user.id|default_if_none:'' }}";
+
+// DOM Elements
+const loadingSpinner = document.getElementById('loading');
+const errorMessage = document.getElementById('error');
+const emptyStateDisplay = document.getElementById('empty');
+const productGridContainer = document.getElementById('grid');
+const showAllProductsButton = document.getElementById('filter-all');
+const showMyProductsButton = document.getElementById('filter-my');
+
+// State Variables
+let activeFilter = 'all';
+let allProductData = [];
+
+// Update filter button appearance
+function updateFilterButtonsAppearance() {
+  if (!showAllProductsButton || !showMyProductsButton) return;
+  if (activeFilter === 'all') {
+    showAllProductsButton.className = 'bg-green-600 text-white px-4 py-2 rounded-md font-medium transition-colors hover:bg-green-700';
+    showMyProductsButton.className = 'bg-white text-gray-700 border border-gray-300 px-4 py-2 rounded-md font-medium transition-colors hover:bg-green-600 hover:text-white';
+  } else {
+    showMyProductsButton.className = 'bg-green-600 text-white px-4 py-2 rounded-md font-medium transition-colors hover:bg-green-700';
+    showAllProductsButton.className = 'bg-white text-gray-700 border border-gray-300 px-4 py-2 rounded-md font-medium transition-colors hover:bg-green-600 hover:text-white';
+  }
+}
+
+// Show/hide page sections
+function displayPageSection({ showLoading = false, showError = false, showEmpty = false, showGrid = false }) {
+  loadingSpinner.classList.toggle('hidden', !showLoading);
+  errorMessage.classList.toggle('hidden', !showError);
+  emptyStateDisplay.classList.toggle('hidden', !showEmpty);
+  productGridContainer.classList.toggle('hidden', !showGrid);
+  if (showGrid) {
+    productGridContainer.className = 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6';
+  }
+}
+
+// Get readable category name
+function getReadableCategoryName(categoryCode) {
+  return categoryCode;
+}
+
+// Create product card element
+function buildProductCardElement(productItem) {
+  const articleElement = document.createElement('article');
+  articleElement.className = 'bg-red-900 bg-opacity-70 rounded-xl border-2 border-yellow-400 shadow-lg overflow-hidden flex flex-col h-full transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:border-white';
+
+  const detailLink = `/product/${productItem.id}/`;
+  const editLink = `/product/${productItem.id}/edit/`;
+  const deleteLink = `/product/${productItem.id}/delete/`;
+
+  const categoryLabel = getReadableCategoryName(productItem.category);
+  const isFeatured = productItem.is_featured;
+  const isInStock = productItem.stock > 0;
+
+  const thumbnailHtml = productItem.thumbnail 
+    ? `<img src='${productItem.thumbnail}' alt='${productItem.name}' class='w-full h-full object-cover border-b-2 border-yellow-400'>` 
+    : `<div class='w-full h-full bg-gradient-to-br from-red-700 to-red-900 flex items-center justify-center'><span class="text-yellow-400 text-4xl font-bold">YNWA</span></div>`;
+
+  const featuredBadge = isFeatured 
+    ? `<span class='inline-flex items-center justify-center w-7 h-7 rounded-full bg-yellow-400 border-2 border-yellow-400 text-red-900 text-xl font-extrabold shadow-lg' title='Featured'><svg xmlns='http://www.w3.org/2000/svg' fill='currentColor' viewBox='0 0 20 20' class='w-5 h-5'><path d='M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.966a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.921-.755 1.688-1.54 1.118l-3.38-2.455a1 1 0 00-1.175 0l-3.38 2.455c-.784.57-1.838-.197-1.539-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.049 9.393c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.966z'/></svg></span>` 
+    : '';
+  const stockBadge = isInStock 
+    ? `<span class='inline-flex items-center px-2 py-1 rounded text-xs font-bold bg-green-600 text-white border border-green-600'>In Stock</span>` 
+    : `<span class='inline-flex items-center px-2 py-1 rounded text-xs font-bold bg-red-700 text-yellow-400 border border-yellow-400'>Out of Stock</span>`;
+
+  const editDeleteButtons = CURRENT_USER_ID && Number(CURRENT_USER_ID) === Number(productItem.user_id)
+    ? `<div class='flex space-x-2'>
+        <a href='${editLink}' class='text-yellow-400 hover:text-white text-sm font-bold transition-colors'>Edit</a>
+        <a href='${deleteLink}' class='text-red-400 hover:text-yellow-400 text-sm font-bold transition-colors' onclick='return confirm("Are you sure you want to delete this product?")'>Delete</a>
+      </div>`
+    : '';
+
+  const completeCardHtml = `
+    <div class="aspect-[16/9] relative overflow-hidden">
+      ${thumbnailHtml}
+      <div class="absolute top-3 left-3">
+        <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-bold bg-yellow-400 text-red-900 border border-yellow-400">${categoryLabel}</span>
+      </div>
+      <div class="absolute top-3 right-3 flex space-x-2">
+        ${featuredBadge}
+      </div>
+      <div class="absolute bottom-3 right-3 flex space-x-2">
+        ${stockBadge}
+      </div>
+    </div>
+    <div class="p-5 flex flex-col flex-1">
+      <div class="flex items-center text-sm text-yellow-400 mb-3 font-bold">
+        <span>Stock: ${productItem.stock}</span>
+      </div>
+      <h3 class="text-lg font-extrabold text-yellow-400 mb-3 line-clamp-2 leading-tight">
+        <a href="${detailLink}" class="hover:text-white transition-colors">${productItem.name}</a>
+      </h3>
+      <p class="text-white text-sm leading-relaxed line-clamp-3 mb-4">${productItem.description}</p>
+      <div class="pt-4 border-t border-yellow-400 flex items-center justify-between">
+        <a href="${detailLink}" class="text-yellow-400 hover:text-white font-bold text-sm transition-colors">More Detail</a>
+        ${editDeleteButtons}
+      </div>
+    </div>
+  `;
+
+  articleElement.innerHTML = completeCardHtml;
+  return articleElement;
+}
+
+// Render all product cards
+function renderAllProductCards(productItems) {
+  productGridContainer.innerHTML = '';
+  productItems.forEach(productItem => {
+    const cardElement = buildProductCardElement(productItem);
+    productGridContainer.appendChild(cardElement);
+  });
+}
+
+// Filter and display products
+function filterAndDisplayProducts() {
+  updateFilterButtonsAppearance();
+  let filteredProducts = activeFilter === 'all'
+    ? allProductData
+    : allProductData.filter(product => Number(product.user_id) === Number(CURRENT_USER_ID));
+  if (filteredProducts.length === 0) {
+    displayPageSection({ showEmpty: true });
+  } else {
+    renderAllProductCards(filteredProducts);
+    displayPageSection({ showGrid: true });
+  }
+}
+
+// Fetch product data from server
+async function fetchProductsFromServer() {
+  try {
+    displayPageSection({ showLoading: true });
+    const response = await fetch(PRODUCT_API_ENDPOINT, {
+      headers: { 'Accept': 'application/json' },
+    });
+    if (!response.ok) {
+      throw new Error('Failed to fetch product data from server');
+    }
+    const productData = await response.json();
+    allProductData = productData || [];
+    filterAndDisplayProducts();
+  } catch (error) {
+    console.error('Error loading products:', error);
+    displayPageSection({ showError: true });
+  }
+}
+
+// Event handlers
+function handleShowAllProductsClick() {
+  activeFilter = 'all';
+  filterAndDisplayProducts();
+}
+
+function handleShowMyProductsClick() {
+  activeFilter = 'my';
+  filterAndDisplayProducts();
+}
+
+// Initialize page
+function initializeProductPage() {
+  showAllProductsButton.addEventListener('click', handleShowAllProductsClick);
+  showMyProductsButton.addEventListener('click', handleShowMyProductsClick);
+  fetchProductsFromServer();
+}
+
+// Start application
+initializeProductPage();
+
+// Add event listener to detect new product
+document.addEventListener('productAdded', function() {
+    // Refresh data without page reload
+    fetchProductsFromServer();
+});
+</script>
+
 {% endblock %}

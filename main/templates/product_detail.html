@@ -1,42 +1,143 @@
-{% extends 'base.html' %} {% block content %}
-<div
-  class="container mx-auto mt-10 p-5 bg-red-800 text-white shadow-lg rounded-lg"
->
-  <a
-    href="{% url 'main:show_main' %}"
-    class="text-green-500 hover:text-green-400 text-sm"
-    >← Back to Product List</a
-  >
+{% extends 'base.html' %}
+{% block content %}
+<div class="bg-gradient-to-br from-red-900 via-red-800 to-yellow-100 w-full min-h-screen px-2 pb-6 sm:px-6 lg:px-8">
+  <div class="max-w-4xl mx-auto py-8">
+    <!-- Back Navigation -->
+    <div class="mb-6">
+      <a href="{% url 'main:show_main' %}" class="text-green-500 hover:text-green-400 text-sm font-medium transition-colors">← Back to Product List</a>
+    </div>
 
-  <h1 class="text-4xl font-bold my-4 text-yellow-500">{{ product.name }}</h1>
-  <p class="text-lg mb-4">
-    <span class="font-semibold text-green-500"
-      >{{ product.get_category_display }}</span
-    >
-    {% if product.is_featured %}
-    <span class="text-yellow-500 font-bold">| Featured</span>
-    {% endif %} | Stock:
-    <span class="font-semibold text-green-500">{{ product.stock }}</span>
-  </p>
+    <!-- Loading State -->
+    <div id="loading-state" class="bg-white rounded-lg border border-gray-200 p-12 text-center">
+      <svg class="animate-spin h-8 w-8 text-green-600 inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+      </svg>
+      <p class="text-gray-600 mt-3">Loading product detail...</p>
+    </div>
 
-  {% if product.thumbnail %}
-  <img
-    src="{{ product.thumbnail }}"
-    alt="Product thumbnail"
-    class="w-full md:w-1/2 rounded-md shadow-md mb-6 border-4 border-green-500"
-  />
-  {% endif %}
+    <!-- Error State -->
+    <div id="error-state" class="bg-white rounded-lg border border-gray-200 p-12 text-center hidden">
+      <div class="w-16 h-16 mx-auto mb-4">
+        <div class="text-red-500 text-5xl">⚠️</div>
+      </div>
+      <h3 class="text-lg font-medium text-gray-900 mb-2">Failed to load product</h3>
+      <p class="text-gray-500">Please try again later.</p>
+    </div>
 
-  <p class="leading-relaxed">{{ product.description }}</p>
-
-  <p class="mt-6">
-    Author: {% if product.user %}
-    <span class="font-semibold text-green-500"
-      >{{ product.user.username }}</span
-    >
-    {% else %}
-    <span class="font-semibold text-yellow-500">Anonymous</span>
-    {% endif %}
-  </p>
+    <!-- Product Content -->
+    <article id="product-content" class="bg-white rounded-2xl border-2 border-yellow-400 shadow-xl overflow-hidden hidden">
+      <div class="p-6 sm:p-8">
+        <div id="badges-container" class="flex flex-wrap items-center gap-2 mb-4">
+          <!-- Dynamic badges will be inserted here -->
+        </div>
+        <h1 id="product-title" class="text-4xl font-extrabold my-4 text-yellow-500 drop-shadow-lg"></h1>
+        <p class="text-lg mb-4 flex items-center gap-2">
+          <span id="product-category" class="font-semibold text-red-700 bg-yellow-100 px-3 py-1 rounded-lg shadow-sm"></span>
+          <span id="product-featured" class=""></span>
+          <span class="text-gray-400">|</span>
+          Stock: <span id="product-stock" class="font-semibold text-green-600 bg-green-100 px-2 py-1 rounded-lg"></span>
+        </p>
+        <div id="product-thumbnail-container" class="mb-6 hidden flex justify-center">
+          <img id="product-thumbnail" src="" alt="Product thumbnail" class="w-full md:w-2/3 rounded-xl shadow-lg border-4 border-yellow-400 bg-white" />
+        </div>
+        <p id="product-description" class="leading-relaxed text-gray-800 bg-yellow-50 rounded-lg p-4 shadow-sm"></p>
+        <p class="mt-6 text-right">Author: <span id="product-author" class="font-semibold text-red-700 bg-yellow-100 px-2 py-1 rounded"></span></p>
+      </div>
+    </article>
+  </div>
 </div>
+
+<script>
+// Configuration
+const PRODUCT_ID = "{{ product.id }}";
+const PRODUCT_DETAIL_ENDPOINT = `{% url 'main:show_json_by_id' '00000000' %}`.replace('00000000', PRODUCT_ID);
+
+// DOM Elements
+const loadingState = document.getElementById('loading-state');
+const errorState = document.getElementById('error-state');
+const productContent = document.getElementById('product-content');
+const badgesContainer = document.getElementById('badges-container');
+const productTitle = document.getElementById('product-title');
+const productCategory = document.getElementById('product-category');
+const productFeatured = document.getElementById('product-featured');
+const productStock = document.getElementById('product-stock');
+const productThumbnailContainer = document.getElementById('product-thumbnail-container');
+const productThumbnail = document.getElementById('product-thumbnail');
+const productDescription = document.getElementById('product-description');
+const productAuthor = document.getElementById('product-author');
+
+// Show/hide page sections
+function showState(state) {
+  loadingState.classList.toggle('hidden', state !== 'loading');
+  errorState.classList.toggle('hidden', state !== 'error');
+  productContent.classList.toggle('hidden', state !== 'ready');
+}
+
+// Render product content
+function renderProduct(product) {
+  // Set title
+  productTitle.textContent = product.name;
+  document.title = `${product.name} - Product Detail`;
+
+  // Set badges
+  badgesContainer.innerHTML = '';
+  // Category badge
+  const categoryBadge = document.createElement('span');
+  categoryBadge.className = 'inline-flex items-center px-3 py-1 rounded-md text-xs font-medium bg-green-600 text-white';
+  categoryBadge.textContent = product.category;
+  badgesContainer.appendChild(categoryBadge);
+  // Featured badge
+  if (product.is_featured) {
+    const featuredBadge = document.createElement('span');
+    featuredBadge.className = 'inline-flex items-center justify-center w-7 h-7 rounded-full bg-yellow-400 border-2 border-yellow-400 text-red-900 text-xl font-extrabold shadow-lg';
+    featuredBadge.innerHTML = `<svg xmlns='http://www.w3.org/2000/svg' fill='currentColor' viewBox='0 0 20 20' class='w-5 h-5'><path d='M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.966a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.921-.755 1.688-1.54 1.118l-3.38-2.455a1 1 0 00-1.175 0l-3.38 2.455c-.784.57-1.838-.197-1.539-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.049 9.393c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.966z'/></svg>`;
+    badgesContainer.appendChild(featuredBadge);
+    productFeatured.innerHTML = `<span class='inline-flex items-center justify-center w-7 h-7 rounded-full bg-yellow-400 border-2 border-yellow-400 text-red-900 text-xl font-extrabold shadow-lg ml-2' title='Featured'><svg xmlns='http://www.w3.org/2000/svg' fill='currentColor' viewBox='0 0 20 20' class='w-5 h-5'><path d='M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.966a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.921-.755 1.688-1.54 1.118l-3.38-2.455a1 1 0 00-1.175 0l-3.38 2.455c-.784.57-1.838-.197-1.539-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.049 9.393c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.966z'/></svg></span>`;
+  } else {
+    productFeatured.textContent = '';
+  }
+  // Set stock
+  productStock.textContent = product.stock;
+
+  // Set thumbnail
+  if (product.thumbnail) {
+    productThumbnail.src = product.thumbnail;
+    productThumbnail.alt = product.name;
+    productThumbnailContainer.classList.remove('hidden');
+  } else {
+    productThumbnailContainer.classList.add('hidden');
+  }
+
+  // Set description
+  productDescription.textContent = product.description;
+
+  // Set author
+  productAuthor.textContent = product.user_username || 'Anonymous';
+}
+
+// Fetch product detail
+async function loadProductDetail() {
+  try {
+    showState('loading');
+    const response = await fetch(PRODUCT_DETAIL_ENDPOINT, {
+      headers: { 'Accept': 'application/json' },
+    });
+    if (!response.ok) {
+      throw new Error('Failed to fetch product detail');
+    }
+    const productData = await response.json();
+    renderProduct(productData);
+    showState('ready');
+  } catch (error) {
+    console.error('Error loading product detail:', error);
+    showState('error');
+  }
+}
+
+// Initialize page
+loadProductDetail();
+
+</script>
+
 {% endblock %}
