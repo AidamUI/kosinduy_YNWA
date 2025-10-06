@@ -13,6 +13,10 @@ import datetime
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 
+from django.http import HttpResponseRedirect, JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
+
 # Create your views here.
 @login_required(login_url='/login/')
 def show_main(request):
@@ -65,10 +69,23 @@ def show_xml(request):
      xml_data = serializers.serialize("xml", product_list)
      return HttpResponse(xml_data, content_type="application/xml")
 
-def show_json(request):
-    product_list = Product.objects.all()
-    json_data = serializers.serialize("json", product_list)
-    return HttpResponse(json_data, content_type="application/json")
+# def show_json(request):
+#     product_list = Product.objects.all()
+#     data = [
+#         {
+#             'id': str(product.id),
+#             'name': product.name,
+#             'price': product.price,
+#             'description': product.description,
+#             'category': product.category,
+#             'thumbnail': product.thumbnail,
+#             'is_featured': product.is_featured,
+#             'stock': product.stock,
+#             'user_id': product.user_id,
+#         }
+#         for product in product_list
+#     ]
+#     return JsonResponse(data, safe=False)
 
 # Buka views.py yang ada pada direktori main dan buatlah dua fungsi baru yang menerima parameter request dan product_id dengan nama show_xml_by_id dan show_json_by_id.
 # Buatlah sebuah variabel di dalam fungsi tersebut yang menyimpan hasil query dari data dengan id tertentu yang ada pada Product.
@@ -82,13 +99,13 @@ def show_xml_by_id(request, product_id):
    except Product.DoesNotExist:
        return HttpResponse(status=404)
 
-def show_json_by_id(request, product_id):
-   try:
-       product_item = Product.objects.get(pk=product_id)
-       json_data = serializers.serialize("json", [product_item])
-       return HttpResponse(json_data, content_type="application/json")
-   except Product.DoesNotExist:
-       return HttpResponse(status=404)
+# def show_json_by_id(request, product_id):
+#    try:
+#        product_item = Product.objects.get(pk=product_id)
+#        json_data = serializers.serialize("json", [product_item])
+#        return HttpResponse(json_data, content_type="application/json")
+#    except Product.DoesNotExist:
+#        return HttpResponse(status=404)
    
 
 # REGISTER, LOGIN, AUTHENTICATION
@@ -147,3 +164,69 @@ def delete_product(request, id):
     product = get_object_or_404(Product, pk=id)
     product.delete()
     return HttpResponseRedirect(reverse('main:show_main'))
+
+
+# AJAX STUFF
+
+# THIS IS PROBABLY STILL BROKEN BECAUSE WRONG COLUMN NAMES
+def show_json(request):
+    product_list = Product.objects.all()
+    data = [
+        {
+            'id': str(product.id),
+            'name': product.name,
+            'price': product.price,
+            'description': product.description,
+            'category': product.category,
+            'thumbnail': product.thumbnail,
+            'is_featured': product.is_featured,
+            'stock': product.stock,
+            'user_id': product.user_id,
+        }
+        for product in product_list
+    ]
+
+    return JsonResponse(data, safe=False)
+
+def show_json_by_id(request, product_id):
+    try:
+        product_item = Product.objects.get(pk=product_id)
+        data = {
+            'id': str(product_item.id),
+            'name': product_item.name,
+            'price': product_item.price,
+            'description': product_item.description,
+            'category': product_item.category,
+            'thumbnail': product_item.thumbnail,
+            'is_featured': product_item.is_featured,
+            'stock': product_item.stock,
+            'user_id': product_item.user_id,
+        }
+        return JsonResponse(data)
+    except Product.DoesNotExist:
+        return JsonResponse({'detail': 'Not found'}, status=404)
+
+@csrf_exempt
+@require_POST
+def add_product_entry_ajax(request):
+    name = request.POST.get("title")
+    description = request.POST.get("content")
+    category = request.POST.get("category")
+    thumbnail = request.POST.get("thumbnail")
+    is_featured = request.POST.get("is_featured") == 'on'
+    user = request.user
+    price = request.POST.get("price")
+    stock = request.POST.get("stock")
+
+    new_product = Product(
+        name=name,
+        description=description,
+        category=category,
+        thumbnail=thumbnail,
+        is_featured=is_featured,
+        user=user,
+        price=price if price else 0,
+        stock=stock if stock else 0
+    )
+    new_product.save()
+    return HttpResponse(b"CREATED", status=201)
