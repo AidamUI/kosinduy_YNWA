@@ -10,7 +10,15 @@
     <link rel="stylesheet" href="{% static 'css/global.css' %}" />
   </head>
   <body class="bg-red-800 text-white">
-    {% block content %} {% endblock content %}
+    <!-- Fixed navbar at top -->
+    <div class="fixed top-0 left-0 right-0 z-50">
+      {% include 'navbar.html' %}
+    </div>
+    
+    <!-- Main content with top padding to avoid navbar overlap -->
+    <div class="pt-20">
+      {% block content %} {% endblock content %}
+    </div>
 
     {% include 'toast.html' %}
     {% include 'modal.html' %}
