@@ -2,7 +2,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 
 from .forms import ProductForm
 from .models import Product
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.core import serializers
 
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
@@ -12,6 +12,8 @@ from django.contrib import messages
 import datetime
 from django.http import HttpResponseRedirect
 from django.urls import reverse
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
 
 from django.http import HttpResponseRedirect, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -118,7 +120,17 @@ def register(request):
         if form.is_valid():
             form.save()
             messages.success(request, 'Your account has been successfully created!')
+            
+            # Return JSON response for AJAX requests
+            if request.headers.get('Accept') == 'application/json':
+                return JsonResponse({'success': True, 'message': 'Registration successful'})
+            
             return redirect('main:login')
+        else:
+            # Return JSON error response for AJAX requests
+            if request.headers.get('Accept') == 'application/json':
+                return JsonResponse({'success': False, 'errors': form.errors}, status=400)
+            
     context = {'form':form}
     return render(request, 'register.html', context)
 
@@ -129,9 +141,18 @@ def login_user(request):
       if form.is_valid():
         user = form.get_user()
         login(request, user)
+        
+        # Return JSON response for AJAX requests
+        if request.headers.get('Accept') == 'application/json':
+            return JsonResponse({'success': True, 'message': 'Login successful'})
+        
         response = HttpResponseRedirect(reverse("main:show_main"))
         response.set_cookie('last_login', str(datetime.datetime.now()))
         return response
+      else:
+        # Return JSON error response for AJAX requests
+        if request.headers.get('Accept') == 'application/json':
+            return JsonResponse({'success': False, 'errors': form.errors}, status=400)
 
    else:
       form = AuthenticationForm(request)
@@ -162,13 +183,27 @@ def edit_product(request, id):
 
 def delete_product(request, id):
     product = get_object_or_404(Product, pk=id)
-    product.delete()
+    
+    if request.method == 'POST':
+        # Check if user owns the product
+        if product.user != request.user:
+            if request.headers.get('Accept') == 'application/json':
+                return JsonResponse({'error': 'Unauthorized'}, status=403)
+            return HttpResponseRedirect(reverse('main:show_main'))
+        
+        product.delete()
+        
+        # Return JSON response for AJAX requests
+        if request.headers.get('Accept') == 'application/json':
+            return JsonResponse({'success': True, 'message': 'Product deleted successfully'})
+        
+        return HttpResponseRedirect(reverse('main:show_main'))
+    
     return HttpResponseRedirect(reverse('main:show_main'))
 
 
-# AJAX STUFF
+# AJAX STUFF ====================================================
 
-# THIS IS PROBABLY STILL BROKEN BECAUSE WRONG COLUMN NAMES
 def show_json(request):
     product_list = Product.objects.all()
     data = [
@@ -230,3 +265,45 @@ def add_product_entry_ajax(request):
     )
     new_product.save()
     return HttpResponse(b"CREATED", status=201)
+
+@csrf_exempt
+@require_POST
+def edit_product_ajax(request, id):
+    try:
+        product = get_object_or_404(Product, pk=id)
+        
+        # Check if user owns the product
+        if product.user != request.user:
+            return JsonResponse({'error': 'Unauthorized'}, status=403)
+        
+        # Update product fields
+        product.name = request.POST.get("name", product.name)
+        product.price = request.POST.get("price", product.price)
+        product.description = request.POST.get("description", product.description)
+        product.category = request.POST.get("category", product.category)
+        product.thumbnail = request.POST.get("thumbnail", product.thumbnail)
+        product.is_featured = request.POST.get("is_featured") == 'on'
+        product.stock = request.POST.get("stock", product.stock)
+        
+        product.save()
+        return JsonResponse({'success': True, 'message': 'Product updated successfully'})
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=400)
+
+def get_product_json(request, id):
+    try:
+        product = get_object_or_404(Product, pk=id)
+        data = {
+            'id': product.id,
+            'name': product.name,
+            'price': product.price,
+            'description': product.description,
+            'category': product.category,
+            'thumbnail': product.thumbnail,
+            'is_featured': product.is_featured,
+            'stock': product.stock,
+            'user_id': product.user_id,
+        }
+        return JsonResponse(data)
+    except Product.DoesNotExist:
+        return JsonResponse({'error': 'Product not found'}, status=404)

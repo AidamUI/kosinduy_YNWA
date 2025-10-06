@@ -2,6 +2,12 @@
 {% load static %}
 {% block content %}
 {% include 'navbar.html' %}
+{% include 'modal_edit.html' %}
+
+<!-- Hidden CSRF token for JavaScript use -->
+<form style="display: none;">
+  {% csrf_token %}
+</form>
 
 <div class="bg-gradient-to-br from-red-900 via-red-800 to-yellow-200 text-white min-h-screen px-2 pb-6 sm:px-6 lg:px-8" style="background: linear-gradient(135deg, #7f1d1d 0%, #b91c1c 60%, #fef3c7 100%);">
   <div class="relative w-screen left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] h-56 sm:h-72 md:h-80 lg:h-96" style="margin-top: 0; margin-bottom: 1.5rem">
@@ -24,26 +30,37 @@
     </div>
   </div>
 
-  <button onclick="showModal()" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded mb-6 inline-block transition">+ Add Product</button>
+  <div class="flex gap-3 mb-6">
+    <button onclick="showModal()" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded inline-block transition">+ Add Product</button>
+    <button onclick="refreshProducts()" id="refreshButton" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded inline-flex items-center transition">
+      <svg id="refreshIcon" class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+      </svg>
+      <span id="refreshText">Refresh</span>
+    </button>
+  </div>
 
-  <!-- AJAX containers -->
-  <div id="loading" class="bg-white rounded-lg border border-gray-200 p-12 text-center hidden">
-    <svg class="animate-spin h-8 w-8 text-green-600 inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
-    </svg>
-    <p class="text-gray-600 mt-3">Loading products...</p>
-  </div>
-  <div id="error" class="hidden text-center text-red-600"></div>
-  <div id="grid" class="hidden grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
-  <div id="empty" class="bg-white rounded-lg border border-gray-200 p-12 text-center hidden">
-    <div class="w-32 h-32 mx-auto mb-4">
-      <img src="{% static 'image/no-news.png' %}" alt="No products available" class="w-full h-full object-contain">
+    <!-- AJAX containers -->
+    <div id="products">
+
+    <div id="loading" class="bg-white rounded-lg border border-gray-200 p-12 text-center hidden">
+      <svg class="animate-spin h-8 w-8 text-green-600 inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+      </svg>
+      <p class="text-gray-600 mt-3">Loading products...</p>
     </div>
-    <h3 class="text-lg font-medium text-gray-900 mb-2">No products found</h3>
-    <p class="text-gray-500 mb-6">Be the first to add a product to the shop.</p>
-    <a href="{% url 'main:add_product' %}" class="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors">Add Product</a>
-  </div>
+    <div id="error" class="hidden text-center text-red-600"></div>
+    <div id="grid" class="hidden grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
+    <div id="empty" class="bg-white rounded-lg border border-gray-200 p-12 text-center hidden">
+      <div class="w-32 h-32 mx-auto mb-4">
+        <img src="{% static 'image/no-news.png' %}" alt="No products available" class="w-full h-full object-contain">
+      </div>
+      <h3 class="text-lg font-medium text-gray-900 mb-2">No products found</h3>
+      <p class="text-gray-500 mb-6">Be the first to add a product to the shop.</p>
+      <a href="{% url 'main:add_product' %}" class="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors">Add Product</a>
+    </div>
+    </div>
 </div>
 </div>
 
@@ -118,8 +135,8 @@ function buildProductCardElement(productItem) {
 
   const editDeleteButtons = CURRENT_USER_ID && Number(CURRENT_USER_ID) === Number(productItem.user_id)
     ? `<div class='flex space-x-2'>
-        <a href='${editLink}' class='text-yellow-400 hover:text-white text-sm font-bold transition-colors'>Edit</a>
-        <a href='${deleteLink}' class='text-red-400 hover:text-yellow-400 text-sm font-bold transition-colors' onclick='return confirm("Are you sure you want to delete this product?")'>Delete</a>
+        <button onclick='editProduct(${productItem.id}, ${JSON.stringify(productItem)})' class='text-yellow-400 hover:text-white text-sm font-bold transition-colors cursor-pointer'>Edit</button>
+        <button onclick='deleteProduct(${productItem.id})' class='text-red-400 hover:text-yellow-400 text-sm font-bold transition-colors cursor-pointer'>Delete</button>
       </div>`
     : '';
 
@@ -218,11 +235,143 @@ function initializeProductPage() {
 // Start application
 initializeProductPage();
 
+// Refresh products function
+async function refreshProducts() {
+    const refreshButton = document.getElementById('refreshButton');
+    const refreshIcon = document.getElementById('refreshIcon');
+    const refreshText = document.getElementById('refreshText');
+    
+    // Show loading state
+    refreshButton.disabled = true;
+    refreshButton.classList.add('opacity-75');
+    refreshIcon.innerHTML = `
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+    `;
+    refreshIcon.classList.add('animate-spin');
+    refreshText.textContent = 'Refreshing...';
+    
+    try {
+        await fetchProductsFromServer();
+        showToast('Products refreshed successfully!', '', 'success');
+    } catch (error) {
+        console.error('Error refreshing products:', error);
+        showToast('Failed to refresh products', '', 'error');
+    } finally {
+        // Reset button state
+        setTimeout(() => {
+            refreshButton.disabled = false;
+            refreshButton.classList.remove('opacity-75');
+            refreshIcon.innerHTML = `
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+            `;
+            refreshIcon.classList.remove('animate-spin');
+            refreshText.textContent = 'Refresh';
+        }, 500); // Small delay to show completion
+    }
+}
+
 // Add event listener to detect new product
 document.addEventListener('productAdded', function() {
     // Refresh data without page reload
     fetchProductsFromServer();
 });
+
+// Add event listener to detect product updates
+document.addEventListener('productUpdated', function() {
+    // Refresh data without page reload
+    fetchProductsFromServer();
+});
+
+// Delete product function
+function deleteProduct(productId) {
+    showConfirmationToast(productId);
+}
+
+// Show custom confirmation toast
+function showConfirmationToast(productId) {
+    const toastComponent = document.getElementById('toast-component');
+    const toastTitle = document.getElementById('toast-title');
+    const toastMessage = document.getElementById('toast-message');
+    
+    if (!toastComponent) return;
+
+    // Set warning styles
+    toastComponent.classList.remove(
+        'bg-red-50', 'border-red-500', 'text-red-600',
+        'bg-green-50', 'border-green-500', 'text-green-600',
+        'bg-white', 'border-gray-300', 'text-gray-800'
+    );
+    toastComponent.classList.add('bg-yellow-50', 'border-yellow-500', 'text-yellow-800');
+    toastComponent.style.border = '2px solid #f59e0b';
+
+    toastTitle.textContent = 'Delete Product';
+    
+    // Clear message and add HTML buttons
+    toastMessage.innerHTML = `
+        <p class="text-yellow-800 mb-3">Are you sure you want to delete this product? This action cannot be undone.</p>
+        <div class="flex gap-2">
+            <button onclick="confirmDelete(${productId})" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm font-medium transition-colors">Delete</button>
+            <button onclick="hideConfirmationToast()" class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 rounded text-sm font-medium transition-colors">Cancel</button>
+        </div>
+    `;
+
+    // Show toast
+    toastComponent.classList.remove('opacity-0', 'translate-y-64');
+    toastComponent.classList.add('opacity-100', 'translate-y-0');
+}
+
+// Hide confirmation toast
+function hideConfirmationToast() {
+    const toastComponent = document.getElementById('toast-component');
+    if (toastComponent) {
+        toastComponent.classList.remove('opacity-100', 'translate-y-0');
+        toastComponent.classList.add('opacity-0', 'translate-y-64');
+    }
+}
+
+// Confirm and execute deletion
+async function confirmDelete(productId) {
+    hideConfirmationToast(); // Hide the confirmation toast
+    
+    try {
+        const response = await fetch(`/product/${productId}/delete/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                'Accept': 'application/json'
+            }
+        });
+        
+        if (response.ok) {
+            showToast('Product deleted successfully!', '', 'success');
+            fetchProductsFromServer();
+        } else {
+            showToast('Error deleting product', '', 'error');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showToast('Error deleting product', '', 'error');
+    }
+}
+
+// Edit product function
+function editProduct(productId, productData = null) {
+    if (productData) {
+        showEditModal(productId, productData);
+    } else {
+        // If no product data provided, fetch it first
+        fetch(`{% url 'main:get_product_json' 0 %}`.replace('0', productId))
+            .then(response => response.json())
+            .then(data => {
+                showEditModal(productId, data);
+            })
+            .catch(error => {
+                console.error('Error fetching product data:', error);
+                showToast('Error loading product data', '', 'error');
+            });
+    }
+}
 </script>
 
 {% endblock %}
