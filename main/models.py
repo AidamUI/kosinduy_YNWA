@@ -12,6 +12,7 @@ class Product(models.Model):
     is_featured = models.BooleanField(default=False)
 
     stock = models.PositiveIntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.name
